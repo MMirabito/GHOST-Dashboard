@@ -1,41 +1,151 @@
+# --------------------------------------------------------------------------
+# Name: dasboard.py
+# Created: Fed 1, 2023 3:11:43 PM
+#  
+# Organization:
+#   The Centers for Disease Control and Prevention,
+#   Office for Infectious Diseases
+#   National Center for HIV, Viral Hepatitis, STD and TB Prevention
+#   Division of Viral Hepatitis
+# 
+#   1600 Clifton Road, Atlanta, GA 30333
+# --------------------------------------------------------------------------
+
+import logging as logging
+import os as os
 import pandas as pd 
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import sys as sys
+
+from jproperties import Properties 
 from PIL import Image
 
+from streamlit import runtime
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+# *********************************************
+# init()
+# *********************************************
+@st.cache_resource
+def init():
+    # Logger setup
+    # Currently not working
+    # logFormat = "%(asctime)s %(levelname)-8s [%(filename)-12s > %(funcName)-25s(): %(lineno)-4s] %(message)s"
+    # dateFormat = "%Y-%m-%d %H:%M:%S"
+    # logging.basicConfig(
+    #     format = logFormat, 
+    #     datefmt = dateFormat
+    # )
+
+    log = logging.getLogger(__name__)
+
+
+    log.info("+--------------------------------------------+")
+    log.info("|         I N I T I A L I Z A T I O N        |")
+    log.info("+--------------------------------------------+")
+    cwd = os.getcwd()   # Get working directory
+    log.info("| Working Dir: [%s]", cwd)
+
+    myPath = os.path.abspath(os.path.join(cwd, "build.properties"))
+    log.info("| myPath: %s", myPath )
+
+    DATA_PATH = os.path.join(cwd, "data")
+    ASSETS_PATH = os.path.join(cwd, "assets")
+
+    log.info("| DATA_PATH: [%s]", DATA_PATH)
+    log.info("| ASSETS_PATH: [%s]", ASSETS_PATH)
+    log.info("| Properties File: [%s]", myPath)
+
+    conf = Properties()
+    with open(myPath, "rb") as inFile:
+        conf.load(inFile)
+
+    version = conf.get("version").data
+    build= conf.get("build").data
+    name = conf.get("name").data
+    vendor = conf.get("vendor").data
+
+    log.info("| Version: [%s]", version)
+    log.info("| Build: [%s]", build)
+    log.info("| Name: [%s]", name)
+    log.info("| Vendor: [%s]", vendor)
+
+    versionHtml = "<div style='line-height: 1;'>" \
+        + "<b><font style='font-size: 1.5rem'>" + name + "</b><br>" \
+        + "<font style='color: #EB4C42; font-size: 1.0rem'>Version: " + version + " Build: " + build  + "</font><br>" \
+        + "<div style='font-size: .8rem;'>" + vendor + "</div>" \
+        + "</div>"
+
+    versionText = "Version: " + version + " Build: " + build 
+
+    log.info("| "+ versionText)
+    log.info("+--------------------------------------------+ ")
+    log.info("| GHOST Dashboard listening...")
+    log.info("+--------------------------------------------+ ")
+
+    return log, DATA_PATH, ASSETS_PATH, versionText, versionHtml
+
+# *********************************************
+# getRemoteIp()
+# Source: https://stackoverflow.com/questions/75410059/how-to-log-user-activity-in-a-streamlit-app
+# *********************************************
+def getRemoteIp() -> str:
+    try:
+        ctx = get_script_run_ctx()
+        if ctx is None:
+            return None
+
+        session_info = runtime.get_instance().get_client(ctx.session_id)
+
+        if session_info is None:
+            return None
+
+    except Exception as e:
+        return None
+
+    return session_info.request.remote_ip
+
+
+# *********************************************
+# Main App Code 
+# *********************************************
 if 'sidebar_state' not in st.session_state:
     st.session_state.sidebar_state = 'collapsed'
+
+
 st.set_page_config(page_title="GHOST Dashboard",
                    page_icon=":bar_chart:",
                    layout="wide",
                    initial_sidebar_state=st.session_state.sidebar_state
 )
 
+log, DATA_PATH, ASSETS_PATH, versionText, versionHtml = init()
+
+log.info("User request IP: [%s]", getRemoteIp())
+
 # ----Horizontal radios-----
-
 st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: center;} </style>', unsafe_allow_html=True)
-
 st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:regular;padding-left:2px;}</style>', unsafe_allow_html=True)
 
 # ----GHOST Logo----
-
-image = Image.open('GHOST_LOGO.png')
+image = Image.open(ASSETS_PATH + "/GHOST_LOGO.png")
 st.image(image)
+st.markdown(versionHtml, unsafe_allow_html=True)
 st.markdown("""---""")
-
 
 # ---- READ EXCEL ----
 
 @st.cache_data
 def get_data_from_excel():
     df = pd.read_excel(
-        io="GHOST_case.xlsx",
-        engine="openpyxl",
-        sheet_name="Sample_inventory",
-        skiprows=3,
-        usecols="B:P",
-        nrows=626,
+        io = DATA_PATH + "/GHOST_case.xlsx",
+        engine = "openpyxl",
+        sheet_name = "Sample_inventory",
+        skiprows = 3,
+        usecols = "B:P",
+        nrows = 626,
     )
     return df
 
@@ -240,3 +350,5 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
+

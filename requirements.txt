@@ -2,3 +2,5 @@ pandas
 plotly-express
 pillow
 openpyxl
+streamlit
+jproperties
