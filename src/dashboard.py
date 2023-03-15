@@ -346,9 +346,9 @@ def main():
 # Source: https://stackoverflow.com/questions/6523791/why-is-python-running-my-module-when-i-import-it-and-how-do-i-stop-it
 # -------------------------------------
 if __name__ == "__main__":
-    st.session_state.authecticated =  Utils.isUserAutenticated()
+    st.session_state.authenticated =  Utils.isUserAuthenticated()
 
-    if (st.session_state.authecticated):
+    if (st.session_state.authenticated):
         main()
 
 

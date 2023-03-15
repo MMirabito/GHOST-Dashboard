@@ -61,16 +61,16 @@ class Utils:
     
 
     # ---------------------------------------
-    # isUserAutenticated Method
+    # isUserAuthenticated Method
     # ---------------------------------------
     @classmethod
-    def isUserAutenticated(cls):
-        if (("authecticated" not in st.session_state) or (st.session_state.authecticated == False) ) :
+    def isUserAuthenticated(cls):
+        if (("authenticated" not in st.session_state) or (st.session_state.authenticated == False) ) :
             placeholder = st.empty()
             with placeholder.form("login", clear_on_submit=True):
                 st.title("GHOST Dashboard")
                 st.subheader("LOGIN")
-                st.text_input("eMail:", key="email", value="mcm8@cdc.gov")
+                st.text_input("eMail:", key="email", value="")
                 st.text_input("AD Password:", type="password", key="password", value="")
                 st.form_submit_button(label="Login", type="primary") 
 
@@ -98,7 +98,7 @@ class Utils:
                     cls.log.info("Invalid User Id/Password: [%s]", email )
                     st.markdown("**:red[Invalid User Id/Password. Please try again.]**")
 
-        elif (st.session_state.authecticated):
+        elif (st.session_state.authenticated):
             return (True)
             
         return (False)
