@@ -1,4 +1,4 @@
-@REM Script to test and run streamlist application
+@REM Script to test and run streamlist application for windoows
 
 CLS
 
@@ -11,5 +11,4 @@ C:\ProgramData\Anaconda3\envs\Streamlit\bin;^
 C:\ProgramData\Anaconda3\condabin;
 
 
-
-streamlit run .\src\dashboard.py
+streamlit run .\src\app.py

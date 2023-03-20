@@ -11,9 +11,6 @@
 #   1600 Clifton Road, Atlanta, GA 30333
 # --------------------------------------------------------------------------
 
-# import ldap3 as ldap3
-# import json as json
-import logging as logging
 import os as os
 import openpyxl as xl
 import pandas as pd 
@@ -21,114 +18,32 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from jproperties import Properties 
 from PIL import Image
 from utils import Utils
 
 # ---------------------------------------
-# init()
+# Play Dashboard 
 # ---------------------------------------
-@st.cache_resource
-def init():
-    # Logger setup
-    # Currently not working
-    # logFormat = "%(asctime)s %(levelname)-8s [%(filename)-12s > %(funcName)-25s(): %(lineno)-4s] %(message)s"
-    # dateFormat = "%Y-%m-%d %H:%M:%S"
-    # logging.basicConfig(
-    #     format = logFormat, 
-    #     datefmt = dateFormat
-    # )
-
-    cwd = os.getcwd()   # Get working directory
-
-    version = Utils.getConfigProperty("version")
-    build= Utils.getConfigProperty("build")
-    name = Utils.getConfigProperty("name")
-    vendor = Utils.getConfigProperty("vendor")
-
-    versionHtml = "<div style='line-height: 1;'>" \
-        + "<b><font style='font-size: 1.5rem'>" + name + "</b><br>" \
-        + "<font style='color: #EB4C42; font-size: 1.0rem'>Version: " + version + " Build: " + build  + "</font><br>" \
-        + "<div style='font-size: .8rem;'>" + vendor + "</div>" \
-        + "</div>"
-
-    versionText = "Version: " + version + " Build: " + build 
-
-    log.info("+--------------------------------------------+")
-    log.info("|         I N I T I A L I Z A T I O N        |")
-    log.info("+--------------------------------------------+")
-    log.info("| Working Dir:   [%s]", cwd)
-    log.info("| CONFIG PATH:   [%s]", Utils.getConfigPath())
-    log.info("| RESOURCE PATH: [%s]", Utils.getResourcePath())
-    log.info("| DATA PATH:     [%s]", Utils.getDataPath())
-    log.info("| Config File:   [%s]", Utils.getConfigPropertiesPath())
-    log.info("+--------------------------------------------+ ")
-    log.info("| LDAP Server:   [%s]", Utils.getConfigProperty("ladpServer"))
-    log.info("| RBAC Users:    [%s]", Utils.getConfigProperty("userDb"))
-    log.info("| XLS Data File: [%s]", Utils.getConfigProperty("data"))
-    log.info("+--------------------------------------------+ ")
-    log.info("| Version: [%s]", version)
-    log.info("| Build: [%s]", build)
-    log.info("| Name: [%s]", name)
-    log.info("| Vendor: [%s]", vendor)
-    log.info("| " + versionText)
-    log.info("+--------------------------------------------+ ")
-    log.info("| GHOST Dashboard listening...")
-    log.info("+--------------------------------------------+ ")
-
-    # return DATA_PATH, RESOURCES_PATH, versionText, versionHtml
-    return versionText, versionHtml
-
-
-# ---------------------------------------
-# Main Method
-# ---------------------------------------
-# Set up global logger
-log = logging.getLogger(__name__)
-
-# Streamlist global setup needs to run first
-if 'sidebar_state' not in st.session_state:
-    st.session_state.sidebar_state = 'collapsed'
-
-st.set_page_config(page_title="GHOST Dashboard",
-            page_icon=":bar_chart:",
-            layout="wide",
-            initial_sidebar_state=st.session_state.sidebar_state
-)
-
-def main():
-    # if 'sidebar_state' not in st.session_state:
-    #     st.session_state.sidebar_state = 'collapsed'
-
-
-    # st.set_page_config(page_title="GHOST Dashboard",
-    #                 page_icon=":bar_chart:",
-    #                 layout="wide",
-    #                 initial_sidebar_state=st.session_state.sidebar_state
-    # )
-
-    # MCM8
-    # Run initialization
-    # DATA_PATH = Utils.getDataPath()
-    # RESOURCES_PATH = Utils.getResourcePath()
-    versionText, versionHtml = init()
-    log.info("%s | %s | %s", st.session_state.userId, st.session_state.name, Utils.getRemoteIp())
+def show():
+    # NOTE: See: app.py - Streamlit global setup needs to run first
 
     # ---- Horizontal radios -----
     st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: center;} </style>', unsafe_allow_html=True)
     st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:regular;padding-left:2px;}</style>', unsafe_allow_html=True)
 
     # ----GHOST Logo ----
-    image = Image.open(Utils.getResourcePath() + "/GHOST_LOGO.png")
-    st.image(image)
-    st.markdown(versionHtml, unsafe_allow_html=True)
-    st.markdown("<b>User ID:</b> {0} | <b>Name:</b> {1} | <b>Admin:</b> {2} | <b>IP:</b> {3}".format(st.session_state.userId, 
-                                                       st.session_state.name, 
-                                                       st.session_state.admin,  
-                                                       Utils.getRemoteIp()), unsafe_allow_html=True)
+    image = Image.open(os.path.join(Utils.getResourcePath(), "GHOST_LOGO.png"))
+    st.image(image, width=500)
+    
+    st.markdown(Utils.versionHtml, unsafe_allow_html=True)
+    st.markdown("<b>User ID:</b> {0} | <b>Name:</b> {1} | <b>Admin:</b> {2} | <b>User IP:</b> {3} | <b>LDAP:</b> {4}"
+                .format(st.session_state.userId
+                        , st.session_state.userProfile["name"] + " (" + st.session_state.userProfile["title"] + ")"
+                        , st.session_state.admin
+                        , Utils.getRemoteIp(),
+                        Utils.getConfigProperty("ldapServer")), unsafe_allow_html=True)
+        
     st.markdown("""---""")
-
-
 
     # ---- READ EXCEL ----
     @st.cache_data
@@ -337,24 +252,3 @@ def main():
                 </style>
                 """
     st.markdown(hide_st_style, unsafe_allow_html=True)
-
-
-# -------------------------------------
-# Main entry point
-# NOTE: To prevent code in the module from being executed when imported, but only when run directly, you can guard it with this if:
-# 
-# Source: https://stackoverflow.com/questions/6523791/why-is-python-running-my-module-when-i-import-it-and-how-do-i-stop-it
-# -------------------------------------
-if __name__ == "__main__":
-    st.session_state.authenticated =  Utils.isUserAuthenticated()
-
-    if (st.session_state.authenticated):
-        main()
-
-
-
-
-
-
-
-

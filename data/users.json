@@ -1,7 +1,7 @@
 {
-    "mcm8@cdc.gov":     {"userId": "mcm8", "name": "Massimo Mirabito", "admin": "Y"},   
-    "tks4@cdc.gov":     {"userId": "tks4", "name": "Thomas Sukalac", "admin": "Y"},   
-    "shw3@cdc.gov":     {"userId": "shw3", "name": "Silver Wang", "admin": "Y"},   
-    "wdc0@cdc.gov":     {"userId": "wdc0", "name": "Doug Correll", "admin": "Y"}   
+    "user1@acme.com":     {"userId": "user1", "admin": "Y"},   
+    "user2@acme.com":     {"userId": "user2", "admin": "Y"},   
+    "user3@acme.com":     {"userId": "user3", "admin": "Y"}
+    
     
 }

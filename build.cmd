@@ -5,13 +5,16 @@
 
 CLS
 ECHO OFF
+
 SET containerName=%1
-
-ECHO ON
-
 IF "%~1" == "" SET containerName=ghost-dashboard
 
+ECHO 
 ECHO Container Name: %containerName% 
-docker build --no-cache --rm --pull --tag=nchhstpoddevcontainerregistry.azurecr.io/%containerName% .
+docker build --no-cache --rm --pull --tag=${azContainerRegistry}/%containerName% .
 
+
+@REM  --progress string         Set type of progress output (auto, plain, tty). Use plain to show container output
+@REM                             (default "auto")
+@REM docker build --no-cache --rm --pull --progress=plain -tag=nchhstpoddevcontainerregistry.azurecr.io/%containerName% .
     
