@@ -7,7 +7,7 @@ CALL .win-setup.cmd
 SET azId=%adg-azId%
 SET azPwd=%adg-azPwd%
 SET azContainerRegistry=%adg-azContainerRegistryName%
-SET azRepoName=%azContainerRegistry%/%containerName%
+SET azRepoName=%azContainerRegistry%/%adg-containerName%
 
 ECHO 
 ECHO +----------------------------------------------------------------+                                                               
@@ -67,6 +67,8 @@ ECHO +----------------------------------------------------------------+
 ECHO  Step 3: Push Image to Azure
 ECHO +----------------------------------------------------------------+
 
+ECHO docker login -u %azId% -p %azPwd% %azContainerRegistry%
+ECHO %azRepoName%:latest 
 docker login -u %azId% -p %azPwd% %azContainerRegistry%
 docker push %azRepoName%:latest 
 
