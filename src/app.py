@@ -11,6 +11,7 @@
 #   1600 Clifton Road, Atlanta, GA 30333
 # --------------------------------------------------------------------------
 
+import dashboard as dashboard
 import streamlit as st
 import traceback as traceback
 
@@ -31,12 +32,11 @@ st.set_page_config(page_title="GHOST Dashboard",
 # Main Method
 # ---------------------------------------
 def main():
-    import dashboard
     dashboard.show()
 
 # -------------------------------------
 # Main entry point
-# NOTE: To prevent code in the module from being executed when imported, but only when run directly, you can guard it with this if:
+# NOTE: To prevent code in the module from being executed when imported, but only when run directly, you can guard it with this
 # 
 # Source: https://stackoverflow.com/questions/6523791/why-is-python-running-my-module-when-i-import-it-and-how-do-i-stop-it
 # -------------------------------------

@@ -2,6 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 
 .logs/
+config.properties
+.win-env.cmd
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

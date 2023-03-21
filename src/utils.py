@@ -35,7 +35,7 @@ from streamlit.runtime.scriptrunner import get_script_run_ctx
 # streamlit application 
 # 
 # Reference: https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json
-#            ⛔ | ✔️ | ❎ | ❌ | 🛡️ | 🛑
+#            ⛔ | ✔️ | ❎ | ❌ | 🛡️ | 🛑 | ℹ️
 # --------------------------------------------------------------------------
 
 
@@ -78,22 +78,26 @@ class Utils:
     @classmethod
     def isUserAuthenticated(cls):
         if (("authenticated" not in st.session_state) or (st.session_state.authenticated == False) ) :
-            placeholder = st.empty()
-            with placeholder.form("login", clear_on_submit=True):
+            login = st.empty()
+            errorMessage = st.empty()
+            with login.form("login", clear_on_submit=True):
                 st.title("GHOST Dashboard")
                 st.subheader("LOGIN")
                 st.text_input("eMail:", key="email", value="")
                 st.text_input("AD Password:", type="password", key="password", value="")
                 st.form_submit_button(label="Login", type="primary") 
+                st.markdown(Utils.versionTxt, unsafe_allow_html=True)
                 
             if ( ("email" in st.session_state and "password" in st.session_state) 
                 and (st.session_state.email and st.session_state.password) ):
 
                 email = st.session_state.email
                 password = st.session_state.password
-
+                
                 cls.log.info("User Id: [%s] :: Password: [%s]", email, "*"*len(password))
-                oneMoment = st.markdown("**:blue[Authenticating and Authorizing - One Moment Please...]**")
+                oneMoment = st.info("Authenticating and Authorizing - One Moment Please.", icon="ℹ️")
+
+                errorMessage.empty()
 
                 status = cls.ldapLogin(email, password)
                 if (status == True) :
@@ -102,19 +106,20 @@ class Utils:
                         st.session_state.userProfile = profile
 
                         del st.session_state.password
-                        placeholder.empty()
+                        login.empty()
                         oneMoment.empty()
                         return (True)
                     
                     else:
                         cls.log.info("User not authorized: [%s]", email )
-                        st.markdown("**:red[User (" + email + ") not authorized. Please contact support at adgapps@cdc.gov. ]**")
+                        errorMessage.error("User (" + email + ") not authorized. Please contact support at adgapps@cdc.gov.", icon="⛔")
                         oneMoment.empty()
+                        
                         return (False)
 
                 else:
                     cls.log.info("Invalid User Id/Password: [%s]", email )
-                    st.markdown("**:red[Invalid User Id/Password. Please try again.]**")
+                    errorMessage.error('Invalid User Id/Password. Please try again.', icon="⛔")
                     oneMoment.empty()
 
         elif (st.session_state.authenticated):

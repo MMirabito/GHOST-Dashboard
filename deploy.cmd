@@ -1,17 +1,15 @@
 CLS
 ECHO OFF
 
-SET containerName=%1
-IF "%~1" == "" SET containerName=ghost-dashboard
+CALL .win-setup.cmd
 
 @REM Azure 
-SET azId=${azId}
-SET azPwd=${azPwd}
-SET azContainerRegistry=${azContainerRegistry}
+SET azId=%adg-azId%
+SET azPwd=%adg-azPwd%
+SET azContainerRegistry=%adg-azContainerRegistryName%
+SET azRepoName=%azContainerRegistry%/%containerName%
 
-SET azRepoName=${azRepoName}/%containerName%
-
-ECHO(
+ECHO 
 ECHO +----------------------------------------------------------------+                                                               
 ECHO  AZ Docker Push
 ECHO +----------------------------------------------------------------+

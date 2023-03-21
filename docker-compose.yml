@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: ./Dockerfile
 
-    container_name:  ${containerName}
-    image: ${azContainerRegistry}/${containerName}
+    container_name: ghost-dashboard
+    image: nchhstpoddevcontainerregistry.azurecr.io/ghost-dashboard
     restart: unless-stopped
 
     ports:

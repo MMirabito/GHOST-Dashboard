@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------
-# Name: dashboard.py
+# Name: dasboard.py
 # Created: Feb 1, 2023 3:11:43 PM
 #  
 # Organization:
@@ -22,7 +22,7 @@ from PIL import Image
 from utils import Utils
 
 # ---------------------------------------
-# Show Dashboard 
+# Play Dashboard 
 # ---------------------------------------
 def show():
     # NOTE: See: app.py - Streamlit global setup needs to run first
@@ -103,7 +103,7 @@ def show():
     st.title(":bar_chart: Dashboard")
     st.markdown("##")
 
-    # ----INDICATORS----
+    # ---- INDICATORS ----
     samples_processed = int(df_selection["Result"].str.count("Po|Ne|Un").sum())
     positive_samples = int(df_selection["Result"].str.count("Positive").sum())
     negative_samples = int(df_selection["Result"].str.count("Negative").sum())
@@ -125,7 +125,7 @@ def show():
 
     st.markdown("""---""")
 
-    # SAMPLES BY STATE [CHART]
+    #---- SAMPLES BY STATE [CHART] ----
     samples_by_state = df_selection.groupby(by=["State", "Result"]).size().to_frame('Results').reset_index()
     results = samples_by_state['Result'].unique()
     states = samples_by_state['State'].unique()
@@ -138,10 +138,10 @@ def show():
         bars_objects.append(bar)
         
     fig_samples_by_state = go.Figure(bars_objects)
-    fig_samples_by_state.update_traces(hovertemplate='Samples: %{x}')
+    fig_samples_by_state.update_traces(hovertemplate='Samples: %{x}') ## Add whatever text you want
     fig_samples_by_state.update_layout(barmode='stack')
 
-    # SAMPLES BY MONTH [CHART]
+    #---- SAMPLES BY MONTH [CHART] ----
     samples_by_month = df_selection.groupby(by=["State", "Month"]).size().to_frame('Months').reset_index()
     monthly = samples_by_month['Month'].unique()
     states = samples_by_month['State'].unique()
@@ -157,7 +157,7 @@ def show():
         bars_objects.append(bar)
         
     fig_samples_by_month = go.Figure(bars_objects)
-    fig_samples_by_month.update_traces(hovertemplate='Samples: %{y}')
+    fig_samples_by_month.update_traces(hovertemplate='Samples: %{y}') ## Add whatever text you want
     fig_samples_by_month.update_layout(barmode='stack')
 
     #---- MISEQ GRAPHS ----
@@ -189,89 +189,32 @@ def show():
         size_max=60,
     )
 
-    #---- BUBBLE MAP ----
-    df_map = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_us_cities.csv')
-    df_map.head()
-
-    df_map['text'] = df_map['name'] + '<br>tested ' + (df_map['pop']/1e6).astype(str)+' samples'
-    limits = [(0,2),(3,10),(11,20),(21,50),(50,3000)]
-    colors = ["royalblue","crimson","lightseagreen","orange","lightgrey"]
-    cities = []
-    scale = 5000
-
-    fig_map = go.Figure()
-
-    for i in range(len(limits)):
-        lim = limits[i]
-        df_sub = df_map[lim[0]:lim[1]]
-        fig_map.add_trace(go.Scattergeo(locationmode = 'USA-states',
-            lon = df_sub['lon'],
-            lat = df_sub['lat'],
-            text = df_sub['text'],
-            marker = dict(
-                size = df_sub['pop']/scale,
-                color = colors[i],
-                line_color='rgb(40,40,40)',
-                line_width=0.5,
-                sizemode = 'area'
-            ),
-            name = '{0} - {1}'.format(lim[0],lim[1])))
-
-    fig_map.update_layout(
-            showlegend = True,
-            geo = dict(
-                scope = 'usa',
-                landcolor = 'rgb(217, 217, 217)',
-            )
-        )
-
-    #---- NEW BUBBLE MAP ----
-    samplePerState = df.groupby(['Result', 'State'])['Result'].count().to_frame('Count').reset_index()
-    samplePerState = samplePerState[samplePerState['State'].str.contains("Ge|Te|Fl")]
-
-    state_abbr = {'Texas': 'TX', 'Florida': 'FL', 'Georgia': 'GA'}
-
-    samplePerState = samplePerState.replace({'State': state_abbr}) # Replace state names with abbreviations
-    fig =  px.scatter_geo(samplePerState, locations="State", hover_name="Result", scope="usa", locationmode="USA-states", color="State", size="Count")
-
     #---- RADIO BUTTONS ----
-    display_sections = ['Query', 'Instrument', 'Full List', 'State', 'Bubble Graph']
+    display_sections = ['Sample Search', 'Monthly Search', 'Genotype Search', 'Cluster Identification', 'Instrument', 'Sequence Query','Full List', 'State', 'Buble Graph']
     selection_buttons = st.radio("Make a selection:", display_sections)
     st.markdown("###")
     col1, col2, col3, col4, col5 = st.columns([1,1,1,1,1]) 
 
-    if selection_buttons == 'Query':
-        sample_search = st.checkbox('Sample Search')
-        montly_search = st.checkbox('Monthly Search')
-        genotype_search = st.checkbox('Genotype Search')
-        cluster_id = st.checkbox('Cluster Identification')
-        seq_query = st.checkbox('Sequence Query')
+    if selection_buttons == 'Sample Search':
+        specimen = col1.text_input('Please enter specimen ID:', 'Exact sample ID')
+        sample_search = df[df['Sample ID'] == (specimen)]
+        st.dataframe(sample_search)
 
-        if sample_search:
-            specimen = col1.text_input('Please enter specimen ID:', 'Exact sample ID')
-            sample_search = df[df['Sample ID'] == (specimen)]
-            st.dataframe(sample_search)
-
-        if montly_search:
-            month_input = col1.text_input('Please enter month:', 'Three letter code')
-            month_search = df[df['Month'].str.contains(month_input.capitalize())]
-            st.dataframe(month_search)  
-            
-        if genotype_search:
-            genotype = col1.text_input('Please enter genotype:', '1a, 1b, 3a, etc')
-            genotype_search = df[df['Genotype'] == (genotype)]
-            st.dataframe(genotype_search) 
-            
-        if cluster_id:
-            cluster = col1.text_input('Please enter cluster ID:', 'Cluster-ID')
-            cluster_id = df[df['Cluster'] == (cluster)]
-            st.dataframe(cluster_id) 
-
-        if seq_query:
-            sequence = st.text_input('Please enter nucleotyde sequence:', 'Only DNA sequences allowed')
-            sequence_query = df[df['Sequence'].str.contains(sequence)]
-            st.dataframe(sequence_query) 
-
+    if selection_buttons == 'Monthly Search':
+        month_input = col1.text_input('Please enter month:', 'Three letter code')
+        month_search = df[df['Month'].str.contains(month_input.capitalize())]
+        st.dataframe(month_search)  
+        
+    if selection_buttons == 'Genotype Search':
+        genotype = col1.text_input('Please enter genotype:', '1a, 1b, 3a, etc')
+        genotype_search = df[df['Genotype'] == (genotype)]
+        st.dataframe(genotype_search) 
+        
+    if selection_buttons == 'Cluster Identification':
+        cluster = col1.text_input('Please enter cluster ID:', 'Cluster-ID')
+        cluster_id = df[df['Cluster'] == (cluster)]
+        st.dataframe(cluster_id) 
+        
     if selection_buttons == 'Instrument':
         miseq = col1.text_input('Please enter instrument number:', 'MiSeq-1, MiSeq-2, etc')
         miseq_report = df[df['Instrument'] == (miseq)]
@@ -279,6 +222,11 @@ def show():
         fig_columns = st.columns(3)
         for i in range(3):
             fig_columns[i].plotly_chart(create_miseq_fig(i + 1), theme="streamlit", use_container_width=True)
+
+    if selection_buttons == 'Sequence Query':
+        sequence = st.text_input('Please enter nucleotyde sequence:', 'Only DNA sequences allowed')
+        sequence_query = df[df['Sequence'].str.contains(sequence)]
+        st.dataframe(sequence_query) 
         
     if selection_buttons == 'Full List':
         df_sorted = df.sort_index()
@@ -292,18 +240,15 @@ def show():
         left_column.plotly_chart(fig_samples_by_state, theme="streamlit", use_container_width=True)
         right_column.plotly_chart(fig_samples_by_month, theme="streamlit", use_container_width=True)
 
-    if selection_buttons == 'Bubble Graph':
-        left_column, right_column = st.columns(2)
-        left_column.plotly_chart(fig, theme="streamlit", use_container_width=True)
-        right_column.plotly_chart(fig_map, theme="streamlit", use_container_width=True)
-        st.plotly_chart(fig_Bubble,theme="streamlit", use_container_width=True)
+    if selection_buttons == 'Buble Graph':
+        st.plotly_chart(fig_Bubble, theme="streamlit", use_container_width=True)
 
     #---- HIDE STREAMLIT STYLE ----
     hide_st_style = """
                 <style>
-                MainMenu {visibility: hidden;}
-                footer {visibility: hidden;}
-                header {visibility: hidden;}
+                    MainMenu {visibility: hidden;}
+                    footer {visibility: hidden;}                                                                                                                                                      
+                    header {visibility: hidden;}
                 </style>
                 """
     st.markdown(hide_st_style, unsafe_allow_html=True)
