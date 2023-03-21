@@ -86,7 +86,7 @@ class Utils:
                 st.text_input("eMail:", key="email", value="")
                 st.text_input("AD Password:", type="password", key="password", value="")
                 st.form_submit_button(label="Login", type="primary") 
-                st.markdown(Utils.versionTxt, unsafe_allow_html=True)
+                st.markdown(Utils.versionHtml, unsafe_allow_html=True)
                 
             if ( ("email" in st.session_state and "password" in st.session_state) 
                 and (st.session_state.email and st.session_state.password) ):
@@ -398,7 +398,7 @@ class Utils:
 
         versionHtml = "<div style='line-height: 1;'>" \
             + "<b><font style='font-size: 1.5rem'>" + name + "</b><br>" \
-            + "<font style='color: #EB4C42; font-size: 1.0rem'>Version: " \
+            + "<font style='color: #0055BD; font-size: 1.0rem'>Version: " \
             + version + " Build: " + build + " sha1:" + sha1 + "</font><br>" \
             + "<div style='font-size: .8rem;'>" + vendor + "</div>" \
             + "</div>"

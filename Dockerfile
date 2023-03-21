@@ -1,7 +1,8 @@
-FROM python:3.11-slim
+FROM python:3.11.2-slim
 RUN apt-get -y update
 RUN apt-get -y install git
 RUN pip install --upgrade pip
+RUN pip install --upgrade streamlit
 
 WORKDIR /app
 
@@ -11,7 +12,7 @@ COPY ./.streamlit/. ./.streamlit
 
 COPY ./config/. ./config
 COPY ./data/. ./data
-COPY ./resources/. ./resources
+COPY ./images/. ./images
 COPY ./src/. ./src
 
 COPY ./requirements.txt ./
