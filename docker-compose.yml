@@ -12,5 +12,16 @@ services:
     ports:
       - "8501:8501"
 
-    # volumes:
-    #   - ./data:/app/data
+    # Volume mapping 
+    volumes:
+      - ./mounts/appextensions:/app/mounts/appextensions
+
+      # - ./data:/app/data
+      # - ./.logs:/app/.logs
+
+      # - ./mounts/appextensions:/app/data
+      # - ./.logs:/app/.logs
+
+    # environment:
+    #   - WEBSITE_MOUNT_appextensions=value
+ 

@@ -1,7 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 
+mounts/
 .logs/
+.BAK/
+
+# Ignore never commit only local files
 config.properties
 .win-env.cmd
 

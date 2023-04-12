@@ -24,28 +24,33 @@ from utils import Utils
 # ---------------------------------------
 # Show Dashboard 
 # ---------------------------------------
-def show():
-    # NOTE: See: app.py - Streamlit global setup needs to run first
+def display():
+    # NOTE: app.py - Code immediately below has been deactivated
+    #                Streamlit global setup needs to run first
+    
+    # if 'sidebar_state' not in st.session_state:
+    #     st.session_state.sidebar_state = 'collapsed'
+    # st.set_page_config(page_title="GHOST Dashboard",
+    #                page_icon=":bar_chart:",
+    #                layout="wide",
+    #                initial_sidebar_state=st.session_state.sidebar_state
+    # )
 
     # ---- Horizontal radios -----
     st.write('<style>div.row-widget.stRadio > div{flex-direction:row;justify-content: center;} </style>', unsafe_allow_html=True)
     st.write('<style>div.st-bf{flex-direction:column;} div.st-ag{font-weight:regular;padding-left:2px;}</style>', unsafe_allow_html=True)
 
     # ----GHOST Logo ----
-    image = Image.open(os.path.join(Utils.getResourcePath(), "GHOST_LOGO.png"))
-    st.image(image, width=500)
-    
-    st.markdown(Utils.versionHtml, unsafe_allow_html=True)
-    st.markdown("<b>User ID:</b> {0} | <b>Name:</b> {1} | <b>Admin:</b> {2} | <b>User IP:</b> {3} | <b>LDAP:</b> {4}"
-                .format(st.session_state.userId
-                        , st.session_state.userProfile["name"] + " (" + st.session_state.userProfile["title"] + ")"
-                        , st.session_state.admin
-                        , Utils.getRemoteIp(),
-                        Utils.getConfigProperty("ldapServer")), unsafe_allow_html=True)
-        
-    st.markdown("""---""")
+    # NOTE: Code immediately below has been deactivated
+    #       and moved in the method Utils.showAppInfo()  
+
+    # image = Image.open('GHOST_LOGO.png')
+    # st.image(image)
+    # st.markdown("""---""")
+    Utils.showAppInfo()
 
     # ---- READ EXCEL ----
+    # NOTE: Excel file path and name comes from the Utils class
     @st.cache_data
     def get_data_from_excel():
         df = pd.read_excel(

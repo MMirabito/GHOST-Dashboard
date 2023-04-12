@@ -8,8 +8,12 @@ ECHO OFF
 ECHO Building Docker Image...
 CALL .win-setup.cmd
 
-docker build --no-cache --rm --pull --tag=%adg-azContainerRegistryName%/%adg-containerName% .
+ECHO +---------------------------------------------------+
+ECHO   B U I L D I N G   D O C K E R   I M A G E
+ECHO +---------------------------------------------------+
 
+docker build --no-cache --rm --pull --progress=plain --tag=%adg-azContainerRegistryName%/%adg-containerName% . 
+@REM docker build --rm --pull --tag=%adg-azContainerRegistryName%/%adg-containerName% .
 
 @REM  --progress string         Set type of progress output (auto, plain, tty). Use plain to show container output
 @REM                             (default "auto")

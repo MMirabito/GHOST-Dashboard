@@ -32,7 +32,7 @@ st.set_page_config(page_title="GHOST Dashboard",
 # Main Method
 # ---------------------------------------
 def main():
-    dashboard.show()
+    dashboard.display()
 
 # -------------------------------------
 # Main entry point
@@ -41,17 +41,20 @@ def main():
 # Source: https://stackoverflow.com/questions/6523791/why-is-python-running-my-module-when-i-import-it-and-how-do-i-stop-it
 # -------------------------------------
 if __name__ == "__main__":
-    
     try:
         Utils.init()
-        st.session_state.authenticated =  Utils.isUserAuthenticated()
+        dataFound = Utils.isDataFound()
+        if (dataFound) :
+            st.session_state.authenticated =  Utils.isUserAuthenticated()
 
-        if (st.session_state.authenticated):
-            main()
+            if (st.session_state.authenticated):
+                main()
 
     except Exception as e:
         s = traceback.format_exc()
         st.text(s)
+        log = Utils().getLog()
+        log.error(s)
 
 
 

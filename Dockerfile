@@ -10,13 +10,14 @@ WORKDIR /app
 COPY ./.git/. ./.git
 COPY ./.streamlit/. ./.streamlit
 
-COPY ./config/. ./config
-COPY ./data/. ./data
+COPY ./conf/. ./conf
+# COPY ./data/. ./data
 COPY ./images/. ./images
 COPY ./src/. ./src
 
 COPY ./requirements.txt ./
 COPY ./build.properties ./
+COPY ./README.md ./
 
 # Install python requirements
 RUN pip install -r requirements.txt 
