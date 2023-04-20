@@ -1,16 +1,17 @@
 # GHOST Dashboard
 
-To install the dependencies needed:
+Install and Configure some type of Python environment like Anaconda. Once installed you can configure the work space to run Streamlit
+Additional dependencies required:
 
 - ```pip install -r requirements.txt```
 
-Run using a streamlit environment:
+Run using a Streamlit environment:
 
 - ```streamlit run dashboard.py``` this should open a new tab on your browser with the application running.
 
 **Running on Windows**
 
-**NOTE:** The application use a simple authentication using active directory. You will need access to AD or simple comment out AD authentication
+**NOTE:** The application uses a simple authentication using Active Directory via LDAP. You will need access to AD or simply comment out the AD authentication part of the code.
 
 - **Python** needs to be installed and configured.
 - ```win-env.cmd``` needs to to have the **{VALUE-GOES-HERE}** replaced in order to be able to run the application. To Run type the following command  
@@ -21,7 +22,7 @@ Run using a streamlit environment:
 
 - Docker Desktop should be running   
 - Use ```build.cmd``` to create image to then run ```up.cmd``` with docker compose then go to [http://localhost:8501/](http://localhost:8501/ "http://localhost:8501/")
-- To deploy image to Azure use ```deply.cmd```
+- To deploy image to Azure use ```deploy.cmd```
 
 **Other Information**
 

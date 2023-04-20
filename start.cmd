@@ -1,6 +1,6 @@
 ECHO OFF
 @REM Windows Shell Script to test and run streamlist application for windoows for development
-@REM Pass --clean argument to do to some clean up
+@REM @REM Pass --clean argument to do to some clean up
 @REM Source: chatGPT
 
 CLS
@@ -19,7 +19,7 @@ C:\ProgramData\Anaconda3\condabin;
 
 CALL .win-setup.cmd
 
-@REM Clean up 
+@REM Clean up environment to make it easier. remeber you need to pass --clean to start.cmd
 FOR %%i IN (%*) DO (
     IF "%%i"=="--clean" (
         RMDIR .logs /S /Q
