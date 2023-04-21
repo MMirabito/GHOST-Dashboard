@@ -34,7 +34,7 @@ Run using a Streamlit environment:
 **NOTE:** Try to avoid committing files with sensitive data and/or URLs
 
 ## Application Architecture
-![Application Architecture)](images/2023-03-21_13-23-45.png) 
+![Application Architecture)](images/Architecture-streamlit.png) 
 
 ## Docker Desktop View
 ![Running a container in Docker)](images/2023-03-21_11-38-45.png)
